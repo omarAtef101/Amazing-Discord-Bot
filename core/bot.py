@@ -4,6 +4,9 @@ from .config import config
 
 from discord.ext import commands
 import discord
+import logging
+
+logger: logging.Logger = logging.getLogger(__name__)
 
 class Bot(commands.Bot):
     def __init__(self):
@@ -18,5 +21,4 @@ class Bot(commands.Bot):
         await self.load_extension("extensions")
     
     async def on_ready(self) -> None:
-        print(f'Logged in as {self.user} (ID: {self.user.id})')
-        print('------')
+        logger.info("Logged in as %s | %d", self.user, self.user.id)

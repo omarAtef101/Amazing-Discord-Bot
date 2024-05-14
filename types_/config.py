@@ -5,6 +5,7 @@ class Tokens(TypedDict):
 
 class Options(TypedDict):
     prefixes: str
+    logging: int
     
 class Ides(TypedDict):
     owner_userid: int
