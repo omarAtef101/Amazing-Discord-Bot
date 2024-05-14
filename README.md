@@ -1,2 +1,2 @@
-Amazing Discord Bot
+# Amazing Discord Bot
 ___
