@@ -12,28 +12,26 @@ class MyCog(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
                 self.bot = bot
     
+    
+    async def cog_command_error(self, ctx, error):
+        if isinstance(error, discord.ext.commands.errors.NotOwner):
+            await ctx.send('You must be the owner to use this command!')
+        else:
+            print(error)
+    
+    @commands.is_owner()
     @commands.command()
     async def clear(self, ctx):
-        print("clear command")
-        if ctx.author.id == config["IDES"]["owner_userid"]:
-            global_commands = await self.bot.http.get_global_commands(self.bot.application_id)
-            for command in global_commands:
-                await self.bot.http.delete_global_command(self.bot.application_id, command['id'])
+        self.bot.tree.clear_commands(guild=None)
+        await self.bot.tree.sync(guild=None)
+        await ctx.send('All tree app commands are cleared.')
 
-            async for guild in self.bot.fetch_guilds():
-                guild_commands = await self.bot.http.get_guild_commands(self.bot.application_id, guild.id)
-                for command in guild_commands:
-                    await self.bot.http.delete_guild_command(self.bot.application_id, guild.id, command['id'])
-        await ctx.send('All tree app commands are cleared.\nSync Now!')
-            
+    @commands.is_owner()         
     @commands.command()
     async def sync(self, ctx):
-        print("sync command")
-        if ctx.author.id == config["IDES"]["owner_userid"]:
-            await self.bot.tree.sync()
-            await ctx.send('Command tree synced.')
-        else:
-            await ctx.send('You must be the owner to use this command!')
+        await self.bot.reload_extension("extensions")
+        await self.bot.tree.sync(guild=None)
+        await ctx.send('Command tree synced.')
     
     @app_commands.command(name="hey", description="This is a command!")
     async def hey(self, interaction: discord.Interaction):

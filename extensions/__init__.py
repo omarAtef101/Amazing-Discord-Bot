@@ -22,3 +22,12 @@ async def setup(bot: core.Bot) -> None:
             loaded.append(f"extensions{extension}")
 
     logger.info("Loaded the following extensions: %s", loaded)
+    
+async def teardown(bot: core.Bot) -> None:
+    extensions: list[str] = [f".{f.stem}" for f in pathlib.Path("extensions").glob("*[a-zA-Z].py")]
+
+    for extension in extensions:
+        try:
+            await bot.unload_extension(extension, package="extensions")
+        except commands.ExtensionNotLoaded:
+            pass
